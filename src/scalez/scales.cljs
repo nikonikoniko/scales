@@ -35,34 +35,31 @@
 
 
 (defn scale
-  ([range steps ^boolean flat?]
-   {:range range :steps steps :flat? flat?})
-  ([range steps]
-   (scale range steps false)))
+  ([range steps ^boolean flat? name]
+   {:range range :steps steps :flat? flat? :name name})
+  ([range steps name]
+   (scale range steps false name)))
 
 ;; major mode
 ;; shifts [2 2 1 2 2 2 1]
-(def ionian (scale 12 [0 2 4 5 7 9 11]))
+(def ionian (scale 12 [0 2 4 5 7 9 11] "ionian"))
 ;; shifts [2 1 2 2 2 1 2]
-(def dorian (scale 12 [0 2 3 5 7 9 10]))
+(def dorian (scale 12 [0 2 3 5 7 9 10] "dorian"))
 ;; shifts [1 2 2 2 1 2 2]
-(def phrygian (scale 12 [0 1 3 5 7 8 10]))
+(def phrygian (scale 12 [0 1 3 5 7 8 10] "phrygian"))
 ;; shifts [2 2 2 1 2 2 1]
-(def lydian (scale 12 [0 2 4 6 7 9 11]))
+(def lydian (scale 12 [0 2 4 6 7 9 11] "lydian"))
 ;; shifts [2 2 1 2 2 1 2]
-(def mixolydian (scale 12 [0 2 4 5 7 9 10]))
+(def mixolydian (scale 12 [0 2 4 5 7 9 10] "mixolydian"))
 ;; minor mode
 ;; shifts [2 1 2 2 1 2 2]
-(def aeolian  (scale 12 [0 2 3 5 7 8 10]))
+(def aeolian  (scale 12 [0 2 3 5 7 8 10] "aeolian"))
 ;; shifts [1 2 2 1 2 2 2]
-(def locrian  (scale 12 [0 1 3 5 6 8 10]))
+(def locrian  (scale 12 [0 1 3 5 6 8 10] "locrian"))
 
 (def scales [ionian dorian phrygian lydian mixolydian aeolian locrian])
 
-; (def western (1/12 2/12 3/12 4/12 5/12 6/12 7/12 8/12 9/12 10/12 11/12 12/12))
 
 (js/console.log "Hello there world!!!!!!!!!!!!!!!!!!!!!!")
-
-(def x 3)
 
 (js/console.log x)
