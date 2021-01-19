@@ -62,4 +62,3 @@
 
 (js/console.log "Hello there world!!!!!!!!!!!!!!!!!!!!!!")
 
-(js/console.log x)
