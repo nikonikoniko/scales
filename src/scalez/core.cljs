@@ -1,5 +1,10 @@
 (ns scalez.core
   (:require [scalez.scales :as scales]
+            [scalez.notes :as notes]
+            [clojure.spec.alpha :as s]
+            [clojure.spec.test.alpha :as stest]
+            [clojure.test.check :as tc]
+            [clojure.test.check.properties :as prop]
             [reagent.dom :as rdom]
             [reagent.core :as r]))
 
@@ -17,25 +22,22 @@
 
 (defn notes-as-select-values []
   (map (fn [n]
-         [:option {:value (:i n)} (scales/pretty n)])
-       scales/western-notes))
+         [:option {:value (:i n)} (notes/pretty n)])
+       notes/western-notes))
 
 (defn select-note [onChange]
   [:select {:on-change #(-> % eventValue onChange)}
    (notes-as-select-values)])
 
-(defn calc-note-name [rootNote step]
-  (->> (+ rootNote step)
-       (#(mod % 12))
-       (nth scales/western-notes)
-       (scales/pretty)))
 
-(defn note [rootNote step] [:span (calc-note-name rootNote step) "-"])
+
+(defn note [name] [:span name "-"])
 
 (defn scale [rootNote scale]
   [:div
    [:p (:name scale)]
-   (map #(note rootNote %) (:steps scale))])
+   [:p (scales/same-scale scale rootNote)]
+   (map note (scales/named-scale scale rootNote))])
 
 (defn scales [rootNote]
   [:div
@@ -63,3 +65,19 @@
   (rdom/render [simple-component] (js/document.getElementById "app")))
 
 (run)
+
+
+
+
+
+
+;; (defn my-inc [x]
+;;   (inc x))
+;; (s/fdef my-inc
+;;       :args (s/cat :x number?)
+;;       :ret number?)
+
+;; (stest/instrument `my-inc)
+;; (stest/check `my-inc)
+
+;; (my-inc "hello")
