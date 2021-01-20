@@ -62,28 +62,26 @@
 
 (defn select-strings [ss replace remove add]
   [:div
-   [:p "current strings"]
    (map-indexed (fn [i s] (select-string s #(replace i %) (fn [] (remove i)))) ss)
    [:button {:on-click #(add)} "+"]])
    ;(map-indexed (fn [idx s] (select-string s (#(onChange idx %))) ss))])
 
 (defn shared-state []
-  (let [rootNote (r/atom notes/C)
-        selectedStrings (r/atom [(strings/string 0 notes/C)
-                                 (strings/string 0 notes/G)
-                                 (strings/string 0 notes/C)
-                                 (strings/string 0 notes/E)])]
+  (let [root-note (r/atom notes/C)
+        selected-strings (r/atom [(strings/string 0 notes/C)
+                                  (strings/string 0 notes/G)
+                                  (strings/string 0 notes/C)
+                                  (strings/string 0 notes/E)])
+        add-string (fn [] (reset! selected-strings (conj @selected-strings (strings/string 0 notes/C))))
+        remove-string (fn [i] (reset! selected-strings (utils/vec-remove i @selected-strings)))
+        replace-string (fn [i s] (reset! selected-strings (assoc @selected-strings i s)))]
     (fn []
       [:div
        [:p "choose your root note:"]
-       [select-note (fn [n] (reset! rootNote n))]
+       [select-note (fn [n] (reset! root-note n))]
        [:p "choose your strings"]
-       [select-strings
-        @selectedStrings
-        (fn [i s] (reset! selectedStrings (assoc @selectedStrings i s)))
-        (fn [i] (reset! selectedStrings (utils/vec-remove i @selectedStrings)))
-        (fn [] (reset! selectedStrings (conj @selectedStrings (strings/string 0 notes/C))))]
-       [scales @rootNote]])))
+       [select-strings @selected-strings replace-string remove-string add-string]
+       [scales @root-note]])))
 
 (defn simple-component []
   [:div
