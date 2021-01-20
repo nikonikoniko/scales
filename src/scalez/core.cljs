@@ -1,6 +1,8 @@
 (ns scalez.core
   (:require [scalez.scales :as scales]
             [scalez.notes :as notes]
+            [scalez.strings :as strings]
+            [scalez.utils :as utils]
             [clojure.spec.alpha :as s]
             [clojure.spec.test.alpha :as stest]
             [clojure.test.check :as tc]
@@ -31,26 +33,53 @@
 
 
 
-(defn note [name] [:span name "-"])
+(defn note [n] [:span (notes/pretty n) "-"])
 
 (defn scale [rootNote scale]
   [:div
+   [:p "----------"]
    [:p (:name scale)]
-   [:p (scales/same-scale scale rootNote)]
+   [:p (notes/pretty (scales/same-key-major scale rootNote)) " major"]
+   [:p (notes/pretty (scales/same-key-minor scale rootNote)) " minor"]
    (map note (scales/named-scale scale rootNote))])
 
 (defn scales [rootNote]
   [:div
    (map #(scale rootNote %) scales/scales)])
 
+(defn select-string [string replace remove]
+  [:div
+   [:p (notes/pretty (:note string))]
+   [:select {:value (->> string :note :i)
+             :on-change #(->> % eventValue (js/parseInt) (nth notes/western-notes) (strings/string 0) replace)}
+    (notes-as-select-values)]
+   [:button {:on-click #(remove)} "x"]
+   ])
+
+(defn select-strings [ss replace remove add]
+  [:div
+   [:p "current strings"]
+   (map-indexed (fn [i s] (select-string s #(replace i %) (fn [] (remove i)))) ss)
+   [:button {:on-click #(add)} "+"]])
+   ;(map-indexed (fn [idx s] (select-string s (#(onChange idx %))) ss))])
 
 (defn shared-state []
   (let [val (r/atom "foo")
-        rootNote (r/atom 0)]
+        rootNote (r/atom 0)
+        selectedStrings (r/atom [(strings/string 0 notes/C)
+                                 (strings/string 0 notes/G)
+                                 (strings/string 0 notes/C)
+                                 (strings/string 0 notes/E)])]
     (fn []
       [:div
        [:p "choose your root note:"]
        [select-note (fn [v] (reset! rootNote v))]
+       [:p "choose your strings"]
+       [select-strings
+        @selectedStrings
+        (fn [i s] (reset! selectedStrings (assoc @selectedStrings i s)))
+        (fn [i] (reset! selectedStrings (utils/vec-remove i @selectedStrings)))
+        (fn [] (reset! selectedStrings (conj @selectedStrings (strings/string 0 notes/C))))]
        [:p @rootNote]
        [scales @rootNote]])))
 

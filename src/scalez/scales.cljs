@@ -38,19 +38,21 @@
 (defn calc-western-note-name [flat? rootNote step]
   (->> (+ rootNote step)
        (#(mod % 12))
-       (nth notes/western-notes)
-       (notes/pretty flat?)))
+       (nth notes/western-notes)))
 
 (defn named-scale [scale rootNote]
   (->> (:steps scale)
        (map #(calc-western-note-name (:flat scale) rootNote %))))
 
-(defn same-scale [scale rootNote]
+(defn same-key-major [scale rootNote]
   (->> (+ rootNote (:shift scale))
        (#(mod % 12))
-       (nth notes/western-notes)
-       (notes/pretty)))
+       (nth notes/western-notes)))
+
+(defn same-key-minor [scale rootNote]
+  (->> (+ rootNote (:shift scale))
+       (#(mod (+ 9 %) 12))
+       (nth notes/western-notes)))
 
 (named-scale ionian 2)
 
-(same-scale ionian 2)

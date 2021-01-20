@@ -3,8 +3,7 @@
             [clojure.spec.alpha :as s]
             [clojure.spec.test.alpha :as stest]
             [clojure.test.check :as tc]
-            [clojure.test.check.properties :as prop]
-            ))
+            [clojure.test.check.properties :as prop]))
 
 (def log js/console.log)
 
