@@ -28,7 +28,7 @@
        notes/western-notes))
 
 (defn select-note [onChange]
-  [:select {:on-change #(-> % eventValue onChange)}
+  [:select {:on-change #(->> % eventValue (js/parseInt) (nth notes/western-notes) onChange)}
    (notes-as-select-values)])
 
 
@@ -49,9 +49,13 @@
 
 (defn select-string [string replace remove]
   [:div
-   [:p (notes/pretty (:note string))]
    [:select {:value (->> string :note :i)
-             :on-change #(->> % eventValue (js/parseInt) (nth notes/western-notes) (strings/string 0) replace)}
+             :on-change #(->> %
+                              eventValue
+                              (js/parseInt)
+                              (nth notes/western-notes)
+                              (strings/string 0)
+                              replace)}
     (notes-as-select-values)]
    [:button {:on-click #(remove)} "x"]
    ])
@@ -64,8 +68,7 @@
    ;(map-indexed (fn [idx s] (select-string s (#(onChange idx %))) ss))])
 
 (defn shared-state []
-  (let [val (r/atom "foo")
-        rootNote (r/atom 0)
+  (let [rootNote (r/atom notes/C)
         selectedStrings (r/atom [(strings/string 0 notes/C)
                                  (strings/string 0 notes/G)
                                  (strings/string 0 notes/C)
@@ -73,14 +76,13 @@
     (fn []
       [:div
        [:p "choose your root note:"]
-       [select-note (fn [v] (reset! rootNote v))]
+       [select-note (fn [n] (reset! rootNote n))]
        [:p "choose your strings"]
        [select-strings
         @selectedStrings
         (fn [i s] (reset! selectedStrings (assoc @selectedStrings i s)))
         (fn [i] (reset! selectedStrings (utils/vec-remove i @selectedStrings)))
         (fn [] (reset! selectedStrings (conj @selectedStrings (strings/string 0 notes/C))))]
-       [:p @rootNote]
        [scales @rootNote]])))
 
 (defn simple-component []
