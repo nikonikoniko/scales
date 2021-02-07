@@ -24,11 +24,11 @@
 
 (defn notes-as-select-values []
   (map (fn [n]
-         [:option {:value (:i n)} (notes/pretty n)])
-       notes/western-notes))
+         [:option {:value (:step n)} (notes/pretty n)])
+       notes/western-named-notes))
 
 (defn select-note [onChange]
-  [:select {:on-change #(->> % eventValue (js/parseInt) (nth notes/western-notes) onChange)}
+  [:select {:on-change #(->> % eventValue (js/parseInt) (nth notes/western-named-notes) onChange)}
    (notes-as-select-values)])
 
 
@@ -37,11 +37,16 @@
 
 (defn scale [rootNote scale]
   [:div
+   [:p "----------------------------------------------------------------"]
+   (log "aaaaaaaaaaaaaaaaaaa")
+   (log (:name rootNote))
+   [:p "of root! : "(notes/pretty rootNote)]
    [:p "----------"]
-   [:p (:name scale)]
+   [:p "scale : "(:name scale)]
    [:p (notes/pretty (scales/same-key-major scale rootNote)) " major"]
    [:p (notes/pretty (scales/same-key-minor scale rootNote)) " minor"]
-   (map note (scales/named-scale scale rootNote))])
+   [:p "name the scale"]
+   (map note (scales/named-scale-old scale rootNote))])
 
 (defn scales [rootNote]
   [:div
@@ -53,7 +58,7 @@
              :on-change #(->> %
                               eventValue
                               (js/parseInt)
-                              (nth notes/western-notes)
+                              (nth notes/western-named-notes)
                               (strings/string 0)
                               replace)}
     (notes-as-select-values)]

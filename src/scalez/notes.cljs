@@ -7,38 +7,83 @@
 
 (def log js/console.log)
 
-(s/def ::i int?)
-(s/def ::n string?)
-(s/def ::f string?)
+;; note ->  note is actually just a fraction.
+;; it can be made a /named note/ by adding a name
+(s/def ::step int?)
+(s/def ::range int?)
+;; named-note
+(s/def ::name string?)
+;; only used for western notes
+(s/def ::flat-of-name string?)
+(s/def ::sharp-of-name string?)
 
-(s/def ::note (s/keys :req [::i ::n ::f]))
+(s/def ::note
+  (s/keys :req [::step ::total]))
 
+(s/def ::named-note
+  (s/keys :req [::step ::total ::name]
+          :opt [::flat-of-name ::sharp-of-name]))
+
+;; note creator
 (s/fdef note
-  :args (s/cat :i ::i :n ::b :f ::f)
+  :args (s/cat :step ::step
+               :range ::range)
   :ret ::note)
-(defn note [i s f] {:i i :n s :f f})
+(defn note [step range] {:step step :range range})
 
-(defn uniqueJoin [strVec] (->> strVec set vec (string/join "/")))
+(s/fdef named-note
+  :args (s/cat :step ::step
+               :range ::range
+               :name ::name
+               :flat-of-name ::flat-of-name
+               :sharp-of-name ::sharp-of-name))
+(defn named-note
+  ([step range name] {:step step
+                      :range range
+                      :name name})
+  ([step range name flat-of-name sharp-of-name] {:step step
+                                           :range range
+                                           :name name
+                                           :flat-of-name flat-of-name
+                                           :sharp-of-name sharp-of-name}))
+
+; (defn uniqueJoin [strVec] (->> strVec set vec (string/join "/")))
+;
+(defn fraction
+  [note] (/ (:step note) (:range note)))
+
+; (fraction {:step 4 :range 12})
+; (fraction {:step 1 :range 3})
+
+(defn same-note?
+  [n1 n2] (= (fraction n1) (fraction n2)))
+
 
 (defn pretty
-  ([flat note] (->> [(if flat (:f note) (:n note))] uniqueJoin)) ; this line doesnt work dunno
-  ([note] (->> [(:f note) (:n note)] uniqueJoin)))
+  ([note] (:name note)))
 
 
-(def C  (note 0  "C" "C"))
-(def Db (note 1  "C#" "Db"))
-(def D  (note 2  "D" "D"))
-(def Eb (note 3  "D#" "Eb"))
-(def E  (note 4  "E" "E"))
-(def F  (note 5  "F" "F"))
-(def Gb (note 6  "F#" "Gb"))
-(def G  (note 7  "G" "G"))
-(def Ab (note 8  "G#" "Ab"))
-(def A  (note 9  "A" "A"))
-(def Bb (note 10 "A#" "Bb"))
-(def B  (note 11 "B" "B"))
+;; notes are actually names, in different variables
+(def C  (named-note 0 12  "C"))
+(def Db (named-note 1 12  "C#/Db" "C" "D"))
+(def D  (named-note 2 12  "D"))
+(def Eb (named-note 3 12  "D#/Eb" "D" "E"))
+(def E  (named-note 4 12  "E"))
+(def F  (named-note 5 12  "F"))
+(def Gb (named-note 6 12  "F#/Gb" "F" "G"))
+(def G  (named-note 7 12  "G"))
+(def Ab (named-note 8 12  "G#/Ab" "G" "A"))
+(def A  (named-note 9 12  "A"))
+(def Bb (named-note 10 12 "A#/Bb" "A" "B"))
+(def B  (named-note 11 12 "B"))
 
-(def western-notes [C Db D Eb E F Gb G Ab A Bb B])
+
+
+(def western-named-notes [C Db D Eb E F Gb G Ab A Bb B])
 
 ; todo generate this automatically from the western-notes
 (def circle-of-fifths [C G D A E B Gb Db Ab Eb Bb F])
+
+; bunk tests
+
+(same-note? E (note 1 3)) ; should be true
