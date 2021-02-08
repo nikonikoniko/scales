@@ -32,16 +32,20 @@
    (notes-as-select-values)])
 
 
-(defn string-note [scale note]
+(defn string-note [notes note]
   [:div {:style {:position "absolute"
                  :left (str (* 100 (notes/fraction note)) "%")}}
-   (notes/pretty (:steps scale) note)])
+   (notes/pretty notes note)])
 
 (defn string [string rootNote scale]
   (let [string-note-1 (:note string)
+        ;string-note-1 (notes/shift rootNote (:note string))
         western-scale-1 (scales/named-static-scale scale
                                                    notes/western-named-notes
-                                                   rootNote)]
+                                                   rootNote)
+        string-notes (map #(notes/unshift string-note-1 %)
+                          (:steps western-scale-1))]
+
   [:div {:style {:border-top "1px solid blue"
                  :position "relative"
                  :margin-left "1em"
@@ -49,7 +53,7 @@
    [:div {:style {:position "absolute"
                   :left "-1em"}}
     (notes/pretty (:steps western-scale-1) string-note-1)]
-   (map #(string-note western-scale-1 %) (:steps western-scale-1))]))
+   (map #(string-note western-scale-1 %) string-notes)]))
 
 (defn fretboard [strings rootNote scale]
   [:div {:style {:background-color "beige"}}
@@ -110,10 +114,10 @@
 
 (defn shared-state []
   (let [root-note (r/atom notes/C)
-        selected-strings (r/atom [(strings/string 0 notes/C)
-                                  (strings/string 0 notes/G)
+        selected-strings (r/atom [(strings/string 0 notes/D)
                                   (strings/string 0 notes/C)
-                                  (strings/string 0 notes/E)])
+                                  (strings/string 0 notes/G)
+                                  (strings/string 0 notes/C)])
         add-string (fn [] (reset! selected-strings (conj @selected-strings (strings/string 0 notes/C))))
         remove-string (fn [i] (reset! selected-strings (utils/vec-remove i @selected-strings)))
         replace-string (fn [i s] (reset! selected-strings (assoc @selected-strings i s)))]

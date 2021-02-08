@@ -75,16 +75,32 @@
 ; looses the note name
 ; 2/3 + 1/4 for example
 (defn shift
-  [n1, n2]
+  [n1, n2] ; n2 get's merge order
   ; TODO remove inline def
   (let [combined-range (* (:range n1) (:range n2))
         combined-frac (mod (+ (* (:step n1) (:range n2)) ; multiply the base of one by the
-                             (* (:step n2) (:range n1)))
-                          combined-range)] ; mod in case the frac is bigger
+                              (* (:step n2) (:range n1)))
+                           combined-range)] ; mod in case the frac is bigger
                                            ; than denominator
   ; TODO reduce frac by common denominator
-    (note combined-frac
-          combined-range))) ; return a new note based on the frac
+  ; ; assoc keeps the old names of n2, even past the shift
+    (assoc n2 :step combined-frac
+              :range combined-range))) ; return a new note based on the frac
+
+(defn unshift
+  [n1, n2] ; n2 get's merge order
+  ; TODO remove inline def
+  (let [combined-range (* (:range n1) (:range n2))
+        combined-frac (mod (- (* (:step n2) (:range n1))
+                              (* (:step n1) (:range n2)) ; multiply the base of one by the
+                              )
+                           combined-range)] ; mod in case the frac is bigger
+                                           ; than denominator
+  ; TODO reduce frac by common denominator
+  ; ; assoc keeps the old names of n2, even past the shift
+    (assoc n2 :step combined-frac
+              :range combined-range))) ; return a new note based on the frac
+
 
 (defn find-note
   [notes n]
@@ -100,6 +116,7 @@
   (first (filter #(= name (:name %)) notes)))
 
 ; assigns a set of named notes to another set of notes
+; assigns names, without changing step or range
 (defn assign
   [named-notes
    notes]
