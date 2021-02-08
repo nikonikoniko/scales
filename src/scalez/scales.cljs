@@ -41,16 +41,16 @@
 (def scales [ionian dorian phrygian lydian mixolydian aeolian locrian])
 
 
-(defn calc-western-note-name [rootNote step]
-  (->> (:step rootNote)
-       (+ step)
-       (#(mod % 12))
-       (nth notes/western-named-notes)))
+;; (defn calc-western-note-name [rootNote step]
+;;   (->> (:step rootNote)
+;;        (+ step)
+;;        (#(mod % 12))
+;;        (nth notes/western-named-notes)))
 
-(defn named-scale-old [scale rootNote]
-  (->> (:steps scale)
-       (map :step)
-       (map #(calc-western-note-name rootNote %))))
+;; (defn named-scale-old [scale rootNote]
+;;   (->> (:steps scale)
+;;        (map :step)
+;;        (map #(calc-western-note-name rootNote %))))
 
 ; (scale, [named-note], [root-Note]) -> scale with[named-note]
 ; assign a list of named notes
@@ -60,9 +60,11 @@
                    rootNote] ; the root we have to go off
   (->> (:steps scale) ; grab just the notes
        (map #(notes/shift % rootNote)) ; shift each note by the root
-       (notes/assign named-notes)))
+       (notes/assign named-notes)
+       (assoc scale :steps))) ; place the new steps into the scale
 
 
+; TODO rewrite these functions:
 (defn same-key-major [scale rootNote]
   (->> (:step rootNote)
        (+ (:shift scale))

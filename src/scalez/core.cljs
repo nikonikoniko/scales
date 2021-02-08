@@ -33,24 +33,28 @@
 
 
 
-(defn note [n] [:span (notes/pretty n) "-"])
+(defn note [n ns] [:span (notes/pretty ns n) "-"])
+
+(defn notes [ns] (map #(note % ns) ns))
 
 (defn scale [rootNote scale]
   [:div
    [:p "----------------------------------------------------------------"]
-   (log "aaaaaaaaaaaaaaaaaaa")
-   (log (:name rootNote))
-   [:p "of root! : "(notes/pretty rootNote)]
-   [:p "----------"]
+   ; [:p "of root! : "(notes/pretty rootNote)]
+   ; [:p "----------"]
    [:p "scale : "(:name scale)]
-   [:p (notes/pretty (scales/same-key-major scale rootNote)) " major"]
-   [:p (notes/pretty (scales/same-key-minor scale rootNote)) " minor"]
-   [:p "name the scale"]
-   (map note (scales/named-scale scale notes/western-named-notes rootNote))])
+   ; TODO rewrite these functions:
+   [:p (notes/pretty (:steps scale) (scales/same-key-major scale rootNote)) " major"]
+   [:p (notes/pretty (:steps scale) (scales/same-key-minor scale rootNote)) " minor"]
+   ; [:p "name the scale"]
+   (notes (:steps scale))])
 
 (defn scales [rootNote]
   [:div
-   (map #(scale rootNote %) scales/scales)])
+   (map
+    #(scale rootNote
+            (scales/named-scale % notes/western-named-notes rootNote))
+    scales/scales)])
 
 (defn select-string [string replace remove]
   [:div
