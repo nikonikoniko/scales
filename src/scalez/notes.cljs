@@ -93,7 +93,7 @@
 (defn find-or-note
   [notes n]
   (or (find-note notes n)
-      (n)))
+      n))
 
 (defn find-by-name
   [notes name]
