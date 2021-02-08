@@ -7,7 +7,7 @@
         com.bhauman/rebel-readline-cljs {:mvn/version "0.1.4"}}
 
  :aliases {:fig {:main-opts ["-m" "figwheel.main"
-                             "-b" "dev"
-                             "-r"]}}
+                             "-b" "dev" ;references file dev.cljs.edn
+                             "-r"]}} ; repl i guess
 
  :paths ["src" "resources" "target"]}

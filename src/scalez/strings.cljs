@@ -12,3 +12,19 @@
 
 
 (defn string [start note] {:start start :note note})
+
+(defn fret [step range] {:step step :range range})
+
+(def standard-western-frets [
+                             (fret 0 12)
+                             (fret 1 12)
+                             (fret 2 12)
+                             (fret 3 12)
+                             (fret 4 12)
+                             (fret 5 12)
+                             (fret 6 12)
+                             (fret 7 12)
+                             (fret 8 12)
+                             (fret 9 12)
+                             (fret 10 12)
+                             (fret 11 12)])

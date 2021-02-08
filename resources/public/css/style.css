@@ -1,4 +1,205 @@
+@font-face {
+font-family: Junicode;
+font-style: normal;
+font-weight: normal;
+font-stretch: normal;
+src: url('../font/Junicode.woff') format('woff');
+}
+@font-face {
+font-family: Junicode;
+font-style: normal;
+font-weight: bold;
+font-stretch: normal;
+src: url('../font/Junicode-Bold.woff') format('woff');
+}
+@font-face {
+font-family: Junicode;
+font-style: italic;
+font-weight: normal;
+font-stretch: normal;
+src: url('../font/Junicode-Italic.woff') format('woff');
+}
 
-h1 {
-    color: "yellow";
+@font-face {
+font-family: Haas;
+font-style: normal;
+font-weight: normal;
+font-stretch: normal;
+src: url('../font/neue-haas-medium.woff2') format('woff2');
+}
+
+
+
+
+
+
+:root {
+    --color-dark: rgba(0,0,0,.9);
+    --color-gray: #999;
+    --color-faint: rgba(0,0,0,.01);
+    --color-less-faint: rgba(0,0,0,.05);
+    --color-highlight: teal;
+    --color-light:  #fbf8ef;
+    --color-light:  #fffdf8;
+    --color-faint-light: rgba(255,255,255,.8);
+    --fancy: "YoungSerif";
+    --headline: Haas, serif;
+    --serif: Junicode;
+    --mono: "Iosevka";
+    --spacing: 1.9rem;
+    --spacing-double: 3.8rem;
+    --spacing-half: .9rem;
+
+    --color-step-0: #94A9DB;
+    --color-step-1: #E6B3CE;
+    --color-step-2: #AFCDE4;
+    --color-step-3: #E2C9A7;
+    --color-step-4: #E3DBAB;
+    --color-step-5: #B1E4AF;
+    --color-step-6:  #D0B3E6;
+    --color-step-7: #DA9990;
+    --color-step-8: #ABAFE3;
+    --color-step-9: #C2D47D;
+    --color-step-10: #A3E0D2;
+    --color-step-11: #DB94BC;
+
+    --color-step-0: #9CD6DE;
+    --color-step-1: #9CDEDB;
+    --color-step-2: #98DDB9;
+    --color-step-3: #9CDD98;
+    --color-step-4: #C1DB94;
+    --color-step-5: #DADA90;
+    --color-step-6:  #D9CF8C;
+    --color-step-7: #D9B38C;
+    --color-step-8: #D9A68C;
+    --color-step-9: #DE9CAA;
+    --color-step-10: #DD98CA;
+    --color-step-11: #CE94DB;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+}
+body {
+    font-family: var(--serif);
+}
+.main {
+    display: flex;
+}
+.menu {
+    padding: 1rem;
+    position: sticky;
+    top: 0;
+    left: 0;
+    /* these are needed for flexbox + sticky */
+    align-self: flex-start;
+    height: auto;
+}
+.scale-breakdown {
+    border-top: 3px solid black;
+    padding: 0;
+        padding-right: 0px;
+        padding-bottom: 0px;
+    padding-bottom: 3rem;
+    padding-right: 1rem;
+}
+.content {
+    flex-grow: 1;
+}
+.intro {
+    padding: 2rem;
+}
+
+.fretboard {
+    padding: 1rem;
+    background-color: beige;
+}
+.fretboard-string {
+    position: relative;
+    height: 1rem;
+    border-top: 1px solid blue;;
+}
+
+.fretboard .note {
+    position: absolute;
+    margin-top: -.7em;
+}
+.fretboard .fret {
+    position: absolute;
+    margin-top: -.7em;
+    color:blue;
+    opacity: .2;
+    width: 1rem;
+    height: 1rem;
+    text-align: center;
+}
+.fretboard .western.note {
+    color: black;
+    border: 1px solid black;
+}
+.notes .note {
+    display: inline-block;
+}
+.notes .cyclic.note {
+    color: black;
+}
+.note {
+    color: red;
+    font-size: .6rem;
+    border: 1px solid red;
+    /* background-color: beige; */
+    width: 1.4em;
+    height: 1.4em;
+    border-radius: .7em;
+    text-align: center;
+}
+
+.cyclic-0 {
+    color: var(--color-step-0) ;
+    background-color:var(--color-step-0);
+}
+.cyclic-1 {
+    color: var(--color-step-1) ;
+    background-color:var(--color-step-1);
+}
+.cyclic-2 {
+    color: var(--color-step-2) ;
+    background-color:var(--color-step-3);
+}
+.cyclic-3 {
+    color: var(--color-step-3) ;
+    background-color:var(--color-step-3);
+}
+.cyclic-4 {
+    color: var(--color-step-4) ;
+    background-color:var(--color-step-4);
+}
+.cyclic-5 {
+    color: var(--color-step-5) ;
+    background-color:var(--color-step-5);
+}
+.cyclic-6 {
+    color: var(--color-step-6) ;
+    background-color:var(--color-step-6);
+}
+.cyclic-7 {
+    color: var(--color-step-7) ;
+    background-color:var(--color-step-7);
+}
+.cyclic-8 {
+    color: var(--color-step-8) ;
+    background-color:var(--color-step-8);
+}
+.cyclic-9 {
+    color: var(--color-step-9) ;
+    background-color:var(--color-step-9);
+}
+.cyclic-10 {
+    color: var(--color-step-10) ;
+    background-color:var(--color-step-10);
+}
+.cyclic-11 {
+    color: var(--color-step-11) ;
+    background-color:var(--color-step-11);
 }

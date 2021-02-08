@@ -76,7 +76,6 @@
 ; 2/3 + 1/4 for example
 (defn shift
   [n1, n2] ; n2 get's merge order
-  ; TODO remove inline def
   (let [combined-range (* (:range n1) (:range n2))
         combined-frac (mod (+ (* (:step n1) (:range n2)) ; multiply the base of one by the
                               (* (:step n2) (:range n1)))
@@ -89,7 +88,6 @@
 
 (defn unshift
   [n1, n2] ; n2 get's merge order
-  ; TODO remove inline def
   (let [combined-range (* (:range n1) (:range n2))
         combined-frac (mod (- (* (:step n2) (:range n1))
                               (* (:step n1) (:range n2)) ; multiply the base of one by the
