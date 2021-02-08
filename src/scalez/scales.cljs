@@ -9,6 +9,8 @@
 
 (def log js/console.log)
 
+(defn pipeLog [x] (js/console.log x) x)
+
 ; scale
 (defn scale
   [range shift steps name]
@@ -50,11 +52,16 @@
        (map :step)
        (map #(calc-western-note-name rootNote %))))
 
-; (scale, [named-note], [root-Note]) -> [named-note]
+; (scale, [named-note], [root-Note]) -> scale with[named-note]
+; assign a list of named notes
+; to a scale of notes, given the root note
 (defn named-scale [scale ; the scale we are using
                    named-notes ; the set of named notes we want
                    rootNote] ; the root we have to go off
-  (->> (:steps scale)))
+  (->> (:steps scale) ; grab just the notes
+       (map #(notes/shift % rootNote)) ; shift each note by the root
+       (notes/assign named-notes)))
+
 
 (defn same-key-major [scale rootNote]
   (->> (:step rootNote)

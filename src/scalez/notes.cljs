@@ -55,12 +55,51 @@
 ; (fraction {:step 4 :range 12})
 ; (fraction {:step 1 :range 3})
 
+; test for fraction equality
 (defn same-note?
-  [n1 n2] (= (fraction n1) (fraction n2)))
+  [n1 n2] (= (* (:step n1) (:range n2))
+             (* (:step n2) (:range n1))))
+
+(defn log-note [n] (log (:name n) (:step n) (:range n)))
+
+;(note, note) -> note
+; returns a new note shifted by the second
+; looses the note name
+; 2/3 + 1/4 for example
+(defn shift
+  [n1, n2]
+  (def combined-range (* (:range n1) (:range n2)))
+  (def combined-frac (mod (+ (* (:step n1) (:range n2)) ; multiply the base of one by the
+                             (* (:step n2) (:range n1)))
+                          combined-range)) ; mod in case the frac is bigger
+                                           ; than denominator
+  ; TODO reduce frac by common denominator
+  (note combined-frac
+        combined-range)) ; return a new note based on the frac
+
+(defn find-note
+  [notes n]
+  (or (first (filter #(same-note? % n) notes))
+      n))
 
 
+(defn assign
+  [named-notes
+   notes]
+  (log "++++++++++++++++++++++++++=")
+  ; (map (fn [x] (log (:name x) (:step x) (:range x))) notes)
+  (log "----------------------------------")
+  (map (fn [x] (log (:name x) (:step x) (:range x))) named-notes)
+  (map #(find-note named-notes %) notes))
+
+; TODO - name if name,
+; sharp flat if not
+; 1/4 if not that
 (defn pretty
-  ([note] (:name note)))
+  ([note]
+   ; (log (:name note) (:step note) (:range note))
+   (or (:name note)
+       (str (:step note) "/" (:range note)))))
 
 
 ;; notes are actually names, in different variables

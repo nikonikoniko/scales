@@ -46,7 +46,7 @@
    [:p (notes/pretty (scales/same-key-major scale rootNote)) " major"]
    [:p (notes/pretty (scales/same-key-minor scale rootNote)) " minor"]
    [:p "name the scale"]
-   (map note (scales/named-scale-old scale rootNote))])
+   (map note (scales/named-scale scale notes/western-named-notes rootNote))])
 
 (defn scales [rootNote]
   [:div
