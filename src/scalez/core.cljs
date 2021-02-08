@@ -32,17 +32,42 @@
    (notes-as-select-values)])
 
 
+(defn string-note [scale note]
+  [:div {:style {:position "absolute"
+                 :left (str (* 100 (notes/fraction note)) "%")}}
+   (notes/pretty (:steps scale) note)])
 
-(defn note [n ns] [:span (notes/pretty ns n) "-"])
+(defn string [string rootNote scale]
+  (let [string-note-1 (:note string)
+        western-scale-1 (scales/named-static-scale scale
+                                                   notes/western-named-notes
+                                                   rootNote)]
+  [:div {:style {:border-top "1px solid blue"
+                 :position "relative"
+                 :margin-left "1em"
+                 :height "1rem"}}
+   [:div {:style {:position "absolute"
+                  :left "-1em"}}
+    (notes/pretty (:steps western-scale-1) string-note-1)]
+   (map #(string-note western-scale-1 %) (:steps western-scale-1))]))
+
+(defn fretboard [strings rootNote scale]
+  [:div {:style {:background-color "beige"}}
+   (map #(string % rootNote scale) strings)
+   ])
+
+
+
+(defn note [n ns] [:span (notes/pretty ns n) " "])
 (defn notes [ns] (map #(note % ns) ns))
 
-(defn scale [rootNote scale]
-  (def western-scale (scales/named-static-scale scale
+(defn scale [rootNote strings scale]
+  (let [western-scale (scales/named-static-scale scale
                                                 notes/western-named-notes
-                                                rootNote))
-  (def cyclic-scale (scales/named-dynamic-scale scale
+                                                rootNote)
+        cyclic-scale (scales/named-dynamic-scale scale
                                                 notes/cyclic-named-notes
-                                                rootNote))
+                                                rootNote)]
   [:div
    [:p "----------------------------------------------------------------"]
    ; (log "aaaaaaaaaaaaaaaaaaa")
@@ -54,12 +79,14 @@
    [:p "same as : " (notes/pretty (:steps western-scale) (scales/same-key-minor scale rootNote)) " minor"]
    ; [:p "name the scale"]
    [:p (notes (:steps western-scale))]
-   [:p (notes (:steps cyclic-scale))]])
+   [:p (notes (:steps scale))]
+   [:p (notes (:steps cyclic-scale))]
+   (fretboard strings rootNote scale)]))
 
-(defn scales [rootNote]
+(defn scales [rootNote strings]
   [:div
    (map
-    #(scale rootNote %)
+    #(scale rootNote strings %)
     scales/scales)])
 
 (defn select-string [string replace remove]
@@ -96,7 +123,7 @@
        [select-note (fn [n] (reset! root-note n))]
        [:p "choose your strings"]
        [select-strings @selected-strings replace-string remove-string add-string]
-       [scales @root-note]])))
+       [scales @root-note @selected-strings]])))
 
 (defn simple-component []
   [:div

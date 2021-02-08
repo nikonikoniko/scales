@@ -77,14 +77,14 @@
 (defn shift
   [n1, n2]
   ; TODO remove inline def
-  (def combined-range (* (:range n1) (:range n2)))
-  (def combined-frac (mod (+ (* (:step n1) (:range n2)) ; multiply the base of one by the
+  (let [combined-range (* (:range n1) (:range n2))
+        combined-frac (mod (+ (* (:step n1) (:range n2)) ; multiply the base of one by the
                              (* (:step n2) (:range n1)))
-                          combined-range)) ; mod in case the frac is bigger
+                          combined-range)] ; mod in case the frac is bigger
                                            ; than denominator
   ; TODO reduce frac by common denominator
-  (note combined-frac
-        combined-range)) ; return a new note based on the frac
+    (note combined-frac
+          combined-range))) ; return a new note based on the frac
 
 (defn find-note
   [notes n]
@@ -103,7 +103,7 @@
 (defn assign
   [named-notes
    notes]
-  (map #(find-or-note named-notes %) notes))
+  (map #(assoc (find-or-note named-notes %) :step (:step %) :range (:range %)) notes))
 
 (defn western? [n] (= (:type n) "western"))
 
@@ -145,18 +145,18 @@
 
 ;; notes are actually names, in different variables
 ;; note, the name is referenced in flat, sharp, and needs to match
-(def a (named-note 0 12 "cyclic" "1"))
-(def b (named-note 1 12 "cyclic" "2"))
-(def c (named-note 2 12 "cyclic" "3"))
-(def d (named-note 3 12 "cyclic" "4"))
-(def e (named-note 4 12 "cyclic" "5"))
-(def f (named-note 5 12 "cyclic" "6"))
-(def g (named-note 6 12 "cyclic" "7"))
-(def h (named-note 7 12 "cyclic" "8"))
-(def i (named-note 8 12 "cyclic" "9"))
-(def j (named-note 9 12 "cyclic" "10"))
-(def k (named-note 10 12 "cyclic" "11"))
-(def l (named-note 11 12 "cyclic" "12"))
+(def a (named-note 0 12 "cyclic" "0"))
+(def b (named-note 1 12 "cyclic" "1"))
+(def c (named-note 2 12 "cyclic" "2"))
+(def d (named-note 3 12 "cyclic" "3"))
+(def e (named-note 4 12 "cyclic" "4"))
+(def f (named-note 5 12 "cyclic" "5"))
+(def g (named-note 6 12 "cyclic" "6"))
+(def h (named-note 7 12 "cyclic" "7"))
+(def i (named-note 8 12 "cyclic" "8"))
+(def j (named-note 9 12 "cyclic" "9"))
+(def k (named-note 10 12 "cyclic" "10"))
+(def l (named-note 11 12 "cyclic" "11"))
 
 (def cyclic-named-notes [a b c d e f g h i j k l])
 
