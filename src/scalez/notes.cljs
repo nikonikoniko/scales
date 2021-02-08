@@ -42,6 +42,7 @@
                            :range range
                            :type type
                            :name name})
+  ; create a western note with silly sharp flat stuff
   ([step range type name sharp-of-name flat-of-name] {:step step
                                                       :range range
                                                       :name name
@@ -108,6 +109,7 @@
 
 (defn irregular-western? [n] (and (:flat-of-name n) (:sharp-of-name n)))
 
+; give us a pretty string representation of the note
 (defn pretty
   ([n] ; just give us the pretty name of a note
    (or (:name n) ; if we have a name, use that
@@ -136,12 +138,27 @@
 (def Bb (named-note 10 12 "western" "A#/Bb" "A" "B"))
 (def B  (named-note 11 12 "western" "B"))
 
-
-
 (def western-named-notes [C Db D Eb E F Gb G Ab A Bb B])
 
 ; todo generate this automatically from the western-notes
 (def circle-of-fifths [C G D A E B Gb Db Ab Eb Bb F])
+
+;; notes are actually names, in different variables
+;; note, the name is referenced in flat, sharp, and needs to match
+(def a (named-note 0 12 "cyclic" "1"))
+(def b (named-note 1 12 "cyclic" "2"))
+(def c (named-note 2 12 "cyclic" "3"))
+(def d (named-note 3 12 "cyclic" "4"))
+(def e (named-note 4 12 "cyclic" "5"))
+(def f (named-note 5 12 "cyclic" "6"))
+(def g (named-note 6 12 "cyclic" "7"))
+(def h (named-note 7 12 "cyclic" "8"))
+(def i (named-note 8 12 "cyclic" "9"))
+(def j (named-note 9 12 "cyclic" "10"))
+(def k (named-note 10 12 "cyclic" "11"))
+(def l (named-note 11 12 "cyclic" "12"))
+
+(def cyclic-named-notes [a b c d e f g h i j k l])
 
 ; bunk tests
 
