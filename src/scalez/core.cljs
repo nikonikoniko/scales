@@ -49,9 +49,9 @@
    ; (log (:name rootNote))
    ; [:p "of root! : "(notes/pretty rootNote)]
    ; [:p "----------"]
-   [:p "scale : "(:name scale)]
-   [:p (notes/pretty (:steps western-scale) (scales/same-key-major scale rootNote)) " major"]
-   [:p (notes/pretty (:steps western-scale) (scales/same-key-minor scale rootNote)) " minor"]
+   [:p "scale : " (notes/pretty rootNote) " " (:name scale)]
+   [:p "same as : " (notes/pretty (:steps western-scale) (scales/same-key-major scale rootNote)) " major"]
+   [:p "same as : " (notes/pretty (:steps western-scale) (scales/same-key-minor scale rootNote)) " minor"]
    ; [:p "name the scale"]
    [:p (notes (:steps western-scale))]
    [:p (notes (:steps cyclic-scale))]])
@@ -109,19 +109,3 @@
   (rdom/render [simple-component] (js/document.getElementById "app")))
 
 (run)
-
-
-
-
-
-
-;; (defn my-inc [x]
-;;   (inc x))
-;; (s/fdef my-inc
-;;       :args (s/cat :x number?)
-;;       :ret number?)
-
-;; (stest/instrument `my-inc)
-;; (stest/check `my-inc)
-
-;; (my-inc "hello")

@@ -54,8 +54,8 @@
 
 
 ; TODO rewrite these functions:
-(defn same-key-major [scale rootNote]
-  (->> (:step rootNote)
+(defn same-key-major [scale root-note]
+  (->> (:step root-note)
        (+ (:shift scale))
        (#(mod % 12))
        (nth notes/western-named-notes)))
