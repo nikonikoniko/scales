@@ -11,7 +11,7 @@
 
 
 
-(defn string [start note] {:start start :note note})
+(defn string [offset note] {:offset offset :note note})
 
 (defn fret [step range] {:step step :range range})
 

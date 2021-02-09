@@ -133,24 +133,24 @@
   ([notes n] ; give us a name of the note /in the context of that scale/
    (if (irregular-western? n) ; if a western note do special shit
      (if (find-by-name notes (:flat-of-name n))
-       (str (:sharp-of-name n) "#")
-       (str (:flat-of-name n) "b"))
+       (str (:sharp-of-name n) "♯")
+       (str (:flat-of-name n) "♭"))
      (or (:name n)
          (str (:step n) "/" (:range n))))))
 
 ;; notes are actually names, in different variables
 ;; note, the name is referenced in flat, sharp, and needs to match
 (def C  (named-note 0 12 "western" "C"))
-(def Db (named-note 1 12 "western" "C#/Db" "C" "D"))
+(def Db (named-note 1 12 "western" "C♯/D♭" "C" "D"))
 (def D  (named-note 2 12 "western" "D"))
-(def Eb (named-note 3 12 "western" "D#/Eb" "D" "E"))
+(def Eb (named-note 3 12 "western" "D♯/E♭" "D" "E"))
 (def E  (named-note 4 12 "western" "E"))
 (def F  (named-note 5 12 "western" "F"))
-(def Gb (named-note 6 12 "western" "F#/Gb" "F" "G"))
+(def Gb (named-note 6 12 "western" "F♯/G♭" "F" "G"))
 (def G  (named-note 7 12 "western" "G"))
-(def Ab (named-note 8 12 "western" "G#/Ab" "G" "A"))
+(def Ab (named-note 8 12 "western" "G♯/A♭" "G" "A"))
 (def A  (named-note 9 12 "western" "A"))
-(def Bb (named-note 10 12 "western" "A#/Bb" "A" "B"))
+(def Bb (named-note 10 12 "western" "A♯/B♭" "A" "B"))
 (def B  (named-note 11 12 "western" "B"))
 
 (def western-named-notes [C Db D Eb E F Gb G Ab A Bb B])

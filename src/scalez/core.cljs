@@ -70,7 +70,8 @@
                           )
         western-notes (map #(notes/unshift string-note-1 %)
                           (:steps western-scale-1))]
-  [:div {:class ["fretboard-string"]}
+    [:div {:class ["fretboard-string"]
+           :style {:margin-left (str (* 100 (/ (:offset string) 12)) "%")}}
     ; the root of the string as reported by the string
    ; [:div {:style {:position "absolute"
                   ; :left "-1em"}}
@@ -116,8 +117,10 @@
     #(scale rootNote strings %)
     scales/scales)])
 
+
 (defn select-string [string replace remove]
-  [:div
+  [:div {:class ["note-select"]}
+   ; select the tuning of the string
    [:select {:value (->> string :note :step)
              :on-change #(->> %
                               eventValue
@@ -126,6 +129,22 @@
                               (strings/string 0)
                               replace)}
     (notes-as-select-values)]
+   ; select the offset of the string - useful for banjos with fifth strings
+   [:div {:class ["offset-select"]}
+    [:select {:value (->> string :offset)
+              :on-change #(->> %
+                               eventValue
+                               (js/parseInt)
+                               (assoc string :offset)
+                               replace)}
+     [:option {:value 0} 0]
+     [:option {:value 1} 1]
+     [:option {:value 2} 2]
+     [:option {:value 3} 3]
+     [:option {:value 4} 4]
+     [:option {:value 5} 5]
+     [:option {:value 6} 6]]
+    ]
    [:button {:on-click #(remove)} "x"]
    ])
 
@@ -140,7 +159,8 @@
         selected-strings (r/atom [(strings/string 0 notes/D)
                                   (strings/string 0 notes/C)
                                   (strings/string 0 notes/G)
-                                  (strings/string 0 notes/C)])
+                                  (strings/string 0 notes/C)
+                                  (strings/string 5 notes/G)])
         add-string (fn [] (reset! selected-strings (conj @selected-strings (strings/string 0 notes/C))))
         remove-string (fn [i] (reset! selected-strings (utils/vec-remove i @selected-strings)))
         replace-string (fn [i s] (reset! selected-strings (assoc @selected-strings i s)))]
