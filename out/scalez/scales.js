@@ -15,8 +15,8 @@ console.log(x);
 return x;
 });
 scalez.scales.scale = (function scalez$scales$scale(range,shift,steps,name){
-return new cljs.core.PersistentArrayMap(null, 4, [cljs.core.cst$kw$range,range,cljs.core.cst$kw$shift,shift,cljs.core.cst$kw$steps,cljs.core.map.cljs$core$IFn$_invoke$arity$2((function (p1__7704_SHARP_){
-return scalez.notes.note(p1__7704_SHARP_,range);
+return new cljs.core.PersistentArrayMap(null, 4, [cljs.core.cst$kw$range,range,cljs.core.cst$kw$shift,shift,cljs.core.cst$kw$steps,cljs.core.map.cljs$core$IFn$_invoke$arity$2((function (p1__1312_SHARP_){
+return scalez.notes.note(p1__1312_SHARP_,range);
 }),steps),cljs.core.cst$kw$name,name], null);
 });
 scalez.scales.ionian = scalez.scales.scale((12),(0),new cljs.core.PersistentVector(null, 7, 5, cljs.core.PersistentVector.EMPTY_NODE, [(0),(2),(4),(5),(7),(9),(11)], null),"ionian");
@@ -28,26 +28,26 @@ scalez.scales.aeolian = scalez.scales.scale((12),(3),new cljs.core.PersistentVec
 scalez.scales.locrian = scalez.scales.scale((12),(1),new cljs.core.PersistentVector(null, 7, 5, cljs.core.PersistentVector.EMPTY_NODE, [(0),(1),(3),(5),(6),(8),(10)], null),"locrian");
 scalez.scales.scales = new cljs.core.PersistentVector(null, 7, 5, cljs.core.PersistentVector.EMPTY_NODE, [scalez.scales.ionian,scalez.scales.dorian,scalez.scales.phrygian,scalez.scales.lydian,scalez.scales.mixolydian,scalez.scales.aeolian,scalez.scales.locrian], null);
 scalez.scales.named_static_scale = (function scalez$scales$named_static_scale(scale,named_notes,rootNote){
-return cljs.core.assoc.cljs$core$IFn$_invoke$arity$3(scale,cljs.core.cst$kw$steps,scalez.notes.assign(named_notes,cljs.core.map.cljs$core$IFn$_invoke$arity$2((function (p1__7705_SHARP_){
-return scalez.notes.shift(p1__7705_SHARP_,rootNote);
+return cljs.core.assoc.cljs$core$IFn$_invoke$arity$3(scale,cljs.core.cst$kw$steps,scalez.notes.assign(named_notes,cljs.core.map.cljs$core$IFn$_invoke$arity$2((function (p1__1313_SHARP_){
+return scalez.notes.shift(p1__1313_SHARP_,rootNote);
 }),cljs.core.cst$kw$steps.cljs$core$IFn$_invoke$arity$1(scale))));
 });
 scalez.scales.named_dynamic_scale = (function scalez$scales$named_dynamic_scale(scale,named_notes,rootNote){
 return cljs.core.assoc.cljs$core$IFn$_invoke$arity$3(scale,cljs.core.cst$kw$steps,scalez.notes.assign(named_notes,cljs.core.cst$kw$steps.cljs$core$IFn$_invoke$arity$1(scale)));
 });
 scalez.scales.same_key_major = (function scalez$scales$same_key_major(scale,root_note){
-return cljs.core.nth.cljs$core$IFn$_invoke$arity$2(scalez.notes.western_named_notes,(function (){var G__7708 = (cljs.core.cst$kw$shift.cljs$core$IFn$_invoke$arity$1(scale) + cljs.core.cst$kw$step.cljs$core$IFn$_invoke$arity$1(root_note));
-var fexpr__7707 = (function (p1__7706_SHARP_){
-return cljs.core.mod(p1__7706_SHARP_,(12));
+return cljs.core.nth.cljs$core$IFn$_invoke$arity$2(scalez.notes.western_named_notes,(function (){var G__1316 = (cljs.core.cst$kw$shift.cljs$core$IFn$_invoke$arity$1(scale) + cljs.core.cst$kw$step.cljs$core$IFn$_invoke$arity$1(root_note));
+var fexpr__1315 = (function (p1__1314_SHARP_){
+return cljs.core.mod(p1__1314_SHARP_,(12));
 });
-return fexpr__7707(G__7708);
+return fexpr__1315(G__1316);
 })());
 });
 scalez.scales.same_key_minor = (function scalez$scales$same_key_minor(scale,rootNote){
-return cljs.core.nth.cljs$core$IFn$_invoke$arity$2(scalez.notes.western_named_notes,(function (){var G__7711 = (cljs.core.cst$kw$shift.cljs$core$IFn$_invoke$arity$1(scale) + cljs.core.cst$kw$step.cljs$core$IFn$_invoke$arity$1(rootNote));
-var fexpr__7710 = (function (p1__7709_SHARP_){
-return cljs.core.mod(((9) + p1__7709_SHARP_),(12));
+return cljs.core.nth.cljs$core$IFn$_invoke$arity$2(scalez.notes.western_named_notes,(function (){var G__1319 = (cljs.core.cst$kw$shift.cljs$core$IFn$_invoke$arity$1(scale) + cljs.core.cst$kw$step.cljs$core$IFn$_invoke$arity$1(rootNote));
+var fexpr__1318 = (function (p1__1317_SHARP_){
+return cljs.core.mod(((9) + p1__1317_SHARP_),(12));
 });
-return fexpr__7710(G__7711);
+return fexpr__1318(G__1319);
 })());
 });
