@@ -87,15 +87,25 @@ body {
 }
 .main {
     display: flex;
+    padding: 1rem 2rem;
+    margin: 0 auto;
+    max-width: 50rem;
+}
+
+.intro {
+    max-width: 50rem;
+    padding: 1rem 2rem;
+    margin: 0 auto;
 }
 .menu {
-    padding: 1rem;
+    padding-right: 1rem;
     position: sticky;
     top: 0;
     left: 0;
     /* these are needed for flexbox + sticky */
     align-self: flex-start;
     height: auto;
+    overflow-y: auto;
 }
 .scale-breakdown {
     border-top: 3px solid black;
@@ -105,11 +115,32 @@ body {
     padding-bottom: 3rem;
     padding-right: 1rem;
 }
+.scale-header {
+    display: flex;
+}
+.scale-header h3{
+    margin: 0;
+    padding: 0;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    font-size: 1.4rem;
+}
+.scale-header h3 .note {
+    font-size: 1.4rem;
+    color: black;
+    border: 1px solid black;
+}
+.scale-header .scale-notations {
+    padding: 1rem;
+}
+.scale-header > div {
+}
+
+
+
+
 .content {
     flex-grow: 1;
-}
-.intro {
-    padding: 2rem;
 }
 
 .fretboard {
@@ -118,11 +149,14 @@ body {
     overflow: hidden;
     position: relative;
 }
+
 .fretboard-string {
     position: relative;
     width: 100%;
     height: 1rem;
-    border-top: 1px solid blue;;
+    border-top: 1px solid blue;
+    box-shadow: inset .5rem 0px blue;
+    border-left: 2px solid blue;
 }
 
 .fretboard .note {
@@ -142,8 +176,28 @@ body {
     color: black;
     border: 1px solid black;
 }
+.notes {
+    position: relative;
+    height: 1rem;
+}
+.notes:before {
+    content: " ";
+    position:absolute;
+    top: .8rem;
+    right: 0;
+    width: 105%;
+    border-top: 1px solid red;
+    z-index: 1;
+}
 .notes .note {
     display: inline-block;
+    margin-right: .3em;
+    margin-top: -1em;
+    position: relative;
+    z-index: 2;
+}
+.notes .note.western {
+    background-color: beige;
 }
 .notes .cyclic.note {
     color: black;
@@ -157,6 +211,7 @@ body {
     height: 1.4em;
     border-radius: .7em;
     text-align: center;
+    display: inline-block;
 }
 
 .cyclic-0 {
@@ -206,4 +261,52 @@ body {
 .cyclic-11 {
     color: var(--color-step-11) ;
     background-color:var(--color-step-11);
+}
+
+
+button {
+    border: 1px solid black;
+    background-color: black;
+    color:beige;
+    cursor: pointer;
+}
+
+
+
+.string {
+    font-size: .6rem;
+    border-top: 1px solid black;
+    padding: .5rem 0;
+    position: relative;
+}
+.string button.remove-string {
+    position: absolute;
+    padding: 0;
+    margin: 0;
+    top: .5rem;
+    right: 0;
+    border: none;
+    border-radius: .5rem;
+    width: .5rem;
+    height: .5rem;
+    font-size: .5rem;
+    line-height: .5rem;
+    text-align: center;
+    display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+select {
+    font-size: .6rem;
+    padding: 0;
+    background-color: rgba(0,0,0,.1);
+    border: 0;
+    font-family: "mono";
+    appearance: none;
+    border-radius: 0;
+}
+select::after {
+    content: "^aaaa";
+    color: black;
 }

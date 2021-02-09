@@ -9,7 +9,8 @@
             [clojure.test.check :as tc]
             [clojure.test.check.properties :as prop]
             [reagent.dom :as rdom]
-            [reagent.core :as r]))
+            [reagent.core :as r]
+            [clojure.string :as string]))
 
 (def log js/console.log)
 
@@ -29,8 +30,10 @@
        notes/western-named-notes))
 
 (defn select-note [onChange]
-  [:select {:on-change #(->> % eventValue (js/parseInt) (nth notes/western-named-notes) onChange)}
-   (notes-as-select-values)])
+  [:div {:class ["select-note"]}
+   [:label "root note: "]
+   [:select {:on-change #(->> % eventValue (js/parseInt) (nth notes/western-named-notes) onChange)}
+    (notes-as-select-values)]])
 
 (defn bunk-sanitize [s]
   (-> s
@@ -76,7 +79,7 @@
    ; [:div {:style {:position "absolute"
                   ; :left "-1em"}}
     ;(notes/pretty (:steps western-scale-1) string-note-1)]
-   (map string-fret strings/standard-western-frets)
+   (map string-fret (get strings/fret-sets (:fret-set string)))
    (map #(string-note cyclic-scale-1  %) cyclic-notes)
    (map #(string-note western-scale-1 %) western-notes)
    ]))
@@ -102,14 +105,31 @@
   [:div {:class ["scale-breakdown"]}
    ; [:p "of root! : "(notes/pretty rootNote)]
    ; [:p "----------"]
-   [:p "scale : " (notes/pretty rootNote) " " (:name scale)]
-   [:p "same as : " (notes/pretty (:steps western-scale) (scales/same-key-major scale rootNote)) " major"]
-   [:p "same as : " (notes/pretty (:steps western-scale) (scales/same-key-minor scale rootNote)) " minor"]
+   [:div {:class ["scale-header"]}
+    [:h3 [:span {:class ["note"]} (notes/pretty rootNote)] " " (:name scale)]
+    [:div {:class ["scale-notations"]}
+    [:div (notes (:steps western-scale))]
+    [:div (notes (:steps cyclic-scale))]]]
+   (fretboard strings rootNote scale)
+   [:div {:class ["alternate-key"]}
+    "same as : "
+    [:span {:class ["note"]}
+     (->> rootNote
+          (scales/same-key-major scale)
+          (notes/pretty
+           (:steps western-scale)))]
+    " major"]
+   [:div {:class ["alternate-key"]}
+    "same as : "
+    [:span {:class ["note"]}
+     (->> rootNote
+          (scales/same-key-minor scale)
+          (notes/pretty
+           (:steps western-scale)))]
+    " minor"]
    ; [:p "name the scale"]
-   [:p (notes (:steps western-scale))]
    ; [:p (notes (:steps scale))]
-   [:p (notes (:steps cyclic-scale))]
-   (fretboard strings rootNote scale)]))
+   ]))
 
 (defn scales [rootNote strings]
   [:div {:class ["scales-list"]}
@@ -119,34 +139,45 @@
 
 
 (defn select-string [string replace remove]
-  [:div {:class ["note-select"]}
-   ; select the tuning of the string
-   [:select {:value (->> string :note :step)
-             :on-change #(->> %
-                              eventValue
-                              (js/parseInt)
-                              (nth notes/western-named-notes)
-                              (strings/string 0)
-                              replace)}
-    (notes-as-select-values)]
-   ; select the offset of the string - useful for banjos with fifth strings
-   [:div {:class ["offset-select"]}
-    [:select {:value (->> string :offset)
+  [:div {:class ["string"]}
+   [:div {:class ["note-select"]}
+    ; select the tuning of the string
+    [:label "tuned to: "]
+    [:select {:value (->> string :note :step)
               :on-change #(->> %
                                eventValue
                                (js/parseInt)
-                               (assoc string :offset)
+                               (nth notes/western-named-notes)
+                               (strings/string 0)
                                replace)}
-     [:option {:value 0} 0]
-     [:option {:value 1} 1]
-     [:option {:value 2} 2]
-     [:option {:value 3} 3]
-     [:option {:value 4} 4]
-     [:option {:value 5} 5]
-     [:option {:value 6} 6]]
-    ]
-   [:button {:on-click #(remove)} "x"]
-   ])
+     (notes-as-select-values)]
+    ; select the offset of the string - useful for banjos with fifth strings
+    [:div {:class ["offset-select"]}
+     [:label "offset: "]
+     [:select {:value (->> string :offset)
+               :on-change #(->> %
+                                eventValue
+                                (js/parseInt)
+                                (assoc string :offset)
+                                replace)}
+      [:option {:value 0} 0]
+      [:option {:value 1} 1]
+      [:option {:value 2} 2]
+      [:option {:value 3} 3]
+      [:option {:value 4} 4]
+      [:option {:value 5} 5]
+      [:option {:value 6} 6]]]
+    [:div {:class ["frets-select"]}
+     [:label "frets: "]
+     [:select {:value (->> string :fret-set)
+               :on-change #(->> %
+                                eventValue
+                                (assoc string :fret-set)
+                                replace)}
+      [:option {:value "standard-western"} "Standard Western"]
+      [:option {:value "fretless"} "Fretless"]]]
+    [:button {:on-click #(remove)
+              :class ["remove-string"]} "x"]]])
 
 (defn select-strings [ss replace remove add]
   [:div
@@ -167,9 +198,8 @@
     (fn []
       [:div {:class ["main"]}
        [:div {:class ["menu"]}
-        [:p "choose your root note:"]
         [select-note (fn [n] (reset! root-note n))]
-        [:p "choose your strings"]
+        [:h3 "Strings: "]
         [select-strings @selected-strings replace-string remove-string add-string]]
        [:div {:class ["content"]}
        [scales @root-note @selected-strings]]])))

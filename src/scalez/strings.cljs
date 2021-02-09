@@ -11,7 +11,6 @@
 
 
 
-(defn string [offset note] {:offset offset :note note})
 
 (defn fret [step range] {:step step :range range})
 
@@ -28,3 +27,15 @@
                              (fret 9 12)
                              (fret 10 12)
                              (fret 11 12)])
+
+(def fret-sets {"standard-western" standard-western-frets
+                "fretless" []
+                nil []})
+
+(defn string
+  ([offset note] {:offset offset
+                  :note note
+                  :fret-set "standard-western"})
+  ([offset note fret-set] {:offset offset
+                           :note note
+                           :fret-set fret-set}))
