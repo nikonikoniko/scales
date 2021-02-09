@@ -212,6 +212,7 @@ body {
     border-radius: .7em;
     text-align: center;
     display: inline-block;
+    overflow: hidden;
 }
 
 .cyclic-0 {

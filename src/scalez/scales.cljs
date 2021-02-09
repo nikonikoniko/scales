@@ -30,8 +30,27 @@
 (def aeolian    (scale 12 3  [0 2 3 5 7 8 10] "aeolian"));; shifts [2 1 2 2 1 2 2]
 (def locrian    (scale 12 1  [0 1 3 5 6 8 10] "locrian"));; shifts [1 2 2 1 2 2 2]
 
+(def al-urmawi-17-tone (scale 1200 0 [90     ; 256/243
+                                      180    ; 65536/59049
+                                      204    ; 9/8
+                                      284    ; 32/27
+                                      384    ; 8192/6561
+                                      407    ; 81/64
+                                      498    ; 4/3
+                                      588    ; 1024/729
+                                      678    ; 262144/177147
+                                      702    ; 3/2
+                                      792    ; 128/81
+                                      882    ; 32768/19683
+                                      905    ; 27/16
+                                      996    ; 16/9
+                                      1086   ; 4096/2187
+                                      1176   ; 1048576/531441
+                                      ]
+                              "Al-Urmawi 17-tone"))
+
 ; all the scales together
-(def scales [ionian dorian phrygian lydian mixolydian aeolian locrian])
+(def scales [al-urmawi-17-tone ionian dorian phrygian lydian mixolydian aeolian locrian])
 
 ; (scale, [named-note], [root-Note]) -> scale with[named-note]
 ; assign a list of named notes
