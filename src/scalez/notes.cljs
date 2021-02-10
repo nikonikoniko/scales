@@ -106,7 +106,6 @@
     (unshift n1 n2) ; still don't know when to shift or unshift...
     n2))
 
-
 (defn find-note
   [notes root-note n]
   (->> notes

@@ -72,6 +72,7 @@
         western-notes (->> (:steps scale)
                            (notes/named-notes notes/western-named-notes rootNote)
                            (map #(notes/unshift string-note-1 %)))]
+    ; TODO: date needs to be deterministic, do not rely on date
     ^{:key (str (.getTime (js/Date.)) string)}
     [:div {:class ["fretboard-string"]
            :style {:margin-left (str (* 100 (/ (:offset string) 12)) "%")}}
@@ -145,6 +146,7 @@
 
 
 (defn select-string [string replace remove]
+  ; TODO key needs to be deterministic, do not rely on date
   ^{:key (str (.getTime (js/Date.)) string)}
   [:div {:class ["string"]}
    [:div {:class ["note-select"]}
