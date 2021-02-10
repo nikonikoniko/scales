@@ -29,10 +29,11 @@
          ^{:key n} [:option {:value (:step n)} (notes/pretty n)])
        notes/western-named-notes))
 
-(defn select-note [onChange]
+(defn select-note [note onChange]
   [:div {:class ["select-note"]}
    [:label "root note: "]
-   [:select {:on-change #(->> % eventValue (js/parseInt) (nth notes/western-named-notes) onChange)}
+   [:select {:value (:step note)
+             :on-change #(->> % eventValue (js/parseInt) (nth notes/western-named-notes) onChange)}
     (notes-as-select-values)]])
 
 (defn bunk-sanitize [s]
@@ -237,7 +238,7 @@
        (intro)
       [:div {:class ["main"]}
        [:div {:class ["menu"]}
-        [select-note set-root-note]
+        [select-note (:root-note @state) set-root-note]
         [:h3 "Strings: "]
         [select-strings (:strings @state) replace-string remove-string add-string]]
        [:div {:class ["content"]}
