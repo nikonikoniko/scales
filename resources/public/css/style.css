@@ -183,7 +183,7 @@ body {
 .notes:before {
     content: " ";
     position:absolute;
-    top: .8rem;
+    top: .4rem;
     right: 0;
     width: 105%;
     border-top: 1px solid red;
