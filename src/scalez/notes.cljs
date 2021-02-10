@@ -38,17 +38,19 @@
                :sharp-of-name ::sharp-of-name
                :flat-of-name ::flat-of-name))
 (defn named-note
-  ([step range type name] {:step step
-                           :range range
-                           :type type
-                           :name name})
+  ([step range set type name] {:step step
+                               :range range
+                               :type type
+                               :set set
+                               :name name})
   ; create a western note with silly sharp flat stuff
-  ([step range type name sharp-of-name flat-of-name] {:step step
-                                                      :range range
-                                                      :name name
-                                                      :type type
-                                                      :sharp-of-name sharp-of-name
-                                                      :flat-of-name flat-of-name}))
+  ([step range set type name sharp-of-name flat-of-name] {:step step
+                                                     :range range
+                                                     :name name
+                                                     :set set
+                                                     :type type
+                                                     :sharp-of-name sharp-of-name
+                                                     :flat-of-name flat-of-name}))
 
 ; (defn uniqueJoin [strVec] (->> strVec set vec (string/join "/")))
 ;
@@ -99,14 +101,22 @@
     (assoc n2 :step combined-frac
               :range combined-range))) ; return a new note based on the frac
 
+(defn shift? [n1 n2]
+  (if (= (:type n2) :static)
+    (unshift n1 n2) ; still don't know when to shift or unshift...
+    n2))
+
 
 (defn find-note
-  [notes n]
-  (first (filter #(same-note? % n) notes)))
+  [notes root-note n]
+  (->> notes
+       (filter #(same-note? (shift? root-note %) n))
+       first))
+  ; (first (filter #(same-note? % n) notes)))
 
 (defn find-or-note
-  [notes n]
-  (or (find-note notes n)
+  [notes root-note n]
+  (or (find-note notes root-note n)
       n))
 
 (defn find-by-name
@@ -117,8 +127,12 @@
 ; assigns names, without changing step or range
 (defn assign
   [named-notes
+   root-note
    notes]
-  (map #(assoc (find-or-note named-notes %) :step (:step %) :range (:range %)) notes))
+  (->> notes
+       (map #(->> %
+                  (find-or-note named-notes root-note)))))
+       ; (map #(assoc (find-or-note named-notes root-note %) :step (:step %) :range (:range %)))))
 
 (defn western? [n] (= (:type n) "western"))
 
@@ -128,7 +142,7 @@
 (defn pretty
   ([n] ; just give us the pretty name of a note
    (or (:name n) ; if we have a name, use that
-       (str (:step n) "/" (:range n)))) ; otherwise, print the step
+       "?")) ; otherwise, print the step
   ; notes is a subset of scale
   ([notes n] ; give us a name of the note /in the context of that scale/
    (if (irregular-western? n) ; if a western note do special shit
@@ -136,22 +150,33 @@
        (str (:sharp-of-name n) "♯")
        (str (:flat-of-name n) "♭"))
      (or (:name n)
-         (str (:step n) "/" (:range n))))))
+         "?"))))
+
+; (scale, [named-note], [root-Note]) -> scale with[named-note]
+; assign a list of named notes
+; to a scale of notes, given the root note
+(defn named-notes [named-notes ; the set of named notes we want
+                   root-note ; the root we have to go off
+                   notes]
+  (->> notes ; grab just the notes
+       ; (map #(notes/shift % rootNote)) ; shift each note by the root moved to assign
+       (assign named-notes root-note))) ; assign the notes names
+
 
 ;; notes are actually names, in different variables
 ;; note, the name is referenced in flat, sharp, and needs to match
-(def C  (named-note 0 12 "western" "C"))
-(def Db (named-note 1 12 "western" "C♯/D♭" "C" "D"))
-(def D  (named-note 2 12 "western" "D"))
-(def Eb (named-note 3 12 "western" "D♯/E♭" "D" "E"))
-(def E  (named-note 4 12 "western" "E"))
-(def F  (named-note 5 12 "western" "F"))
-(def Gb (named-note 6 12 "western" "F♯/G♭" "F" "G"))
-(def G  (named-note 7 12 "western" "G"))
-(def Ab (named-note 8 12 "western" "G♯/A♭" "G" "A"))
-(def A  (named-note 9 12 "western" "A"))
-(def Bb (named-note 10 12 "western" "A♯/B♭" "A" "B"))
-(def B  (named-note 11 12 "western" "B"))
+(def C  (named-note 0 12 "western" :static "C"))
+(def Db (named-note 1 12 "western" :static "C♯/D♭" "C" "D"))
+(def D  (named-note 2 12 "western" :static "D"))
+(def Eb (named-note 3 12 "western" :static "D♯/E♭" "D" "E"))
+(def E  (named-note 4 12 "western" :static "E"))
+(def F  (named-note 5 12 "western" :static "F"))
+(def Gb (named-note 6 12 "western" :static "F♯/G♭" "F" "G"))
+(def G  (named-note 7 12 "western" :static "G"))
+(def Ab (named-note 8 12 "western" :static "G♯/A♭" "G" "A"))
+(def A  (named-note 9 12 "western" :static "A"))
+(def Bb (named-note 10 12 "western" :static "A♯/B♭" "A" "B"))
+(def B  (named-note 11 12 "western" :static "B"))
 
 (def western-named-notes [C Db D Eb E F Gb G Ab A Bb B])
 
@@ -160,18 +185,18 @@
 
 ;; notes are actually names, in different variables
 ;; note, the name is referenced in flat, sharp, and needs to match
-(def a (named-note 0 12 "cyclic" "0"))
-(def b (named-note 1 12 "cyclic" "1"))
-(def c (named-note 2 12 "cyclic" "2"))
-(def d (named-note 3 12 "cyclic" "3"))
-(def e (named-note 4 12 "cyclic" "4"))
-(def f (named-note 5 12 "cyclic" "5"))
-(def g (named-note 6 12 "cyclic" "6"))
-(def h (named-note 7 12 "cyclic" "7"))
-(def i (named-note 8 12 "cyclic" "8"))
-(def j (named-note 9 12 "cyclic" "9"))
-(def k (named-note 10 12 "cyclic" "10"))
-(def l (named-note 11 12 "cyclic" "11"))
+(def a (named-note 0 12 "cyclic" :relative "0"))
+(def b (named-note 1 12 "cyclic" :relative "1"))
+(def c (named-note 2 12 "cyclic" :relative "2"))
+(def d (named-note 3 12 "cyclic" :relative "3"))
+(def e (named-note 4 12 "cyclic" :relative "4"))
+(def f (named-note 5 12 "cyclic" :relative "5"))
+(def g (named-note 6 12 "cyclic" :relative "6"))
+(def h (named-note 7 12 "cyclic" :relative "7"))
+(def i (named-note 8 12 "cyclic" :relative "8"))
+(def j (named-note 9 12 "cyclic" :relative "9"))
+(def k (named-note 10 12 "cyclic" :relative "10"))
+(def l (named-note 11 12 "cyclic" :relative "11"))
 
 (def cyclic-named-notes [a b c d e f g h i j k l])
 

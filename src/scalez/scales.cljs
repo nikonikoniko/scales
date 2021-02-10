@@ -52,24 +52,15 @@
 ; all the scales together
 (def scales [al-urmawi-17-tone ionian dorian phrygian lydian mixolydian aeolian locrian])
 
-; (scale, [named-note], [root-Note]) -> scale with[named-note]
-; assign a list of named notes
-; to a scale of notes, given the root note
-(defn named-static-scale [scale ; the scale we are using
-                          named-notes ; the set of named notes we want
-                          rootNote] ; the root we have to go off
-  (->> (:steps scale) ; grab just the notes
-       (map #(notes/shift % rootNote)) ; shift each note by the root
-       (notes/assign named-notes)
-       (assoc scale :steps))) ; place the new steps into the scale
 
-(defn named-dynamic-scale [scale ; the scale we are using
-                           named-notes ; the set of named notes we want
-                           rootNote] ; the root we have to go off
-  (->> (:steps scale) ; grab just the notes
-       ; (map #(notes/shift % rootNote)) ; shift each note by the root
-       (notes/assign named-notes)
-       (assoc scale :steps))) ; place the new steps into the scale
+;; (defn named-static-scale [scale ; the scale we are using
+;;                           named-notes ; the set of named notes we want
+;;                           rootNote] ; the root we have to go off
+;;   (->> (:steps scale) ; grab just the notes
+;;        (map #(notes/shift % rootNote)) ; shift each note by the root
+;;        (notes/assign named-notes)
+;;        (assoc scale :steps))) ; place the new steps into the scale
+
 
 
 ; TODO rewrite these functions:

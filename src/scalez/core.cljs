@@ -26,7 +26,7 @@
 
 (defn notes-as-select-values []
   (map (fn [n]
-         [:option {:value (:step n)} (notes/pretty n)])
+         ^{:key n} [:option {:value (:step n)} (notes/pretty n)])
        notes/western-named-notes))
 
 (defn select-note [onChange]
@@ -42,18 +42,21 @@
 
 ; -> string
 (defn note-class-names [n] ["note"
-                            (str (or (:type n) "generic"))
-                            (str (or (:type n) "generic")
+                            (str (or (:set n) "generic"))
+                            (str (or (:set n) "generic")
                               "-"
                               (bunk-sanitize (or (:name n)
                                                  (str (:step n)))))])
 
 (defn string-note [notes note]
+  ^{:key note}
   [:div {:style {:left (str (* 100 (notes/fraction note)) "%")}
-         :class (note-class-names note)}
+         :class (note-class-names note)
+         :title (str (:step note) "/" (:range note))}
    (notes/pretty notes note)])
 
 (defn string-fret [fret]
+  ^{:key fret}
   [:div {:style {:left (str (* 100 (notes/fraction fret)) "%")}
          :class ["fret"]} "|"])
 
@@ -61,18 +64,14 @@
 (defn string [string rootNote scale]
   (let [string-note-1 (:note string)
         ;string-note-1 (notes/shift rootNote (:note string))
-        western-scale-1 (scales/named-static-scale scale
-                                                   notes/western-named-notes
-                                                   rootNote)
-        cyclic-scale-1 (scales/named-dynamic-scale scale
-                                                   notes/cyclic-named-notes
-                                                   rootNote)
-        cyclic-notes (->> (:steps cyclic-scale-1)
+        cyclic-notes (->> (:steps scale)
+                          (notes/named-notes notes/cyclic-named-notes rootNote)
                           (map #(notes/unshift string-note-1 %))
-                          (map #(notes/shift rootNote %))
-                          )
-        western-notes (map #(notes/unshift string-note-1 %)
-                          (:steps western-scale-1))]
+                          (map #(notes/shift rootNote %)))
+        western-notes (->> (:steps scale)
+                           (notes/named-notes notes/western-named-notes rootNote)
+                           (map #(notes/unshift string-note-1 %)))]
+    ^{:key (str (.getTime (js/Date.)) string)}
     [:div {:class ["fretboard-string"]
            :style {:margin-left (str (* 100 (/ (:offset string) 12)) "%")}}
     ; the root of the string as reported by the string
@@ -80,8 +79,8 @@
                   ; :left "-1em"}}
     ;(notes/pretty (:steps western-scale-1) string-note-1)]
    (map string-fret (get strings/fret-sets (:fret-set string)))
-   (map #(string-note cyclic-scale-1  %) cyclic-notes)
-   (map #(string-note western-scale-1 %) western-notes)
+   (map #(string-note cyclic-notes  %) cyclic-notes)
+   (map #(string-note western-notes %) western-notes)
    ]))
 
 (defn fretboard [strings rootNote scale]
@@ -91,25 +90,31 @@
 
 
 
-(defn note [n ns] [:div {:class (note-class-names n)} (notes/pretty ns n)])
+(defn note [ns n]
+  ^{:key n}
+  [:div {:class (note-class-names n)
+         :title (str (:step n) "/" (:range n))}
+   (notes/pretty ns n)])
 
-(defn notes [ns] [:div {:class ["notes"]} (map #(note % ns) ns)])
+(defn notes [ns] [:div {:class ["notes"]}
+                  (map #(note ns %) ns)])
 
 (defn scale [rootNote strings scale]
-  (let [western-scale (scales/named-static-scale scale
-                                                notes/western-named-notes
-                                                rootNote)
-        cyclic-scale (scales/named-dynamic-scale scale
-                                                notes/cyclic-named-notes
-                                                rootNote)]
+  (let [western-notes (notes/named-notes notes/western-named-notes
+                                         rootNote
+                                         (:steps scale))
+        cyclic-notes (notes/named-notes notes/cyclic-named-notes
+                                        rootNote
+                                        (:steps scale))]
+  ^{:key scale}
   [:div {:class ["scale-breakdown"]}
    ; [:p "of root! : "(notes/pretty rootNote)]
    ; [:p "----------"]
    [:div {:class ["scale-header"]}
     [:h3 [:span {:class ["note"]} (notes/pretty rootNote)] " " (:name scale)]
     [:div {:class ["scale-notations"]}
-    [:div (notes (:steps western-scale))]
-    [:div (notes (:steps cyclic-scale))]]]
+     [:div (notes western-notes)]
+     [:div (notes cyclic-notes)]]]
    (fretboard strings rootNote scale)
    [:div {:class ["alternate-key"]}
     "same as : "
@@ -117,7 +122,7 @@
      (->> rootNote
           (scales/same-key-major scale)
           (notes/pretty
-           (:steps western-scale)))]
+          western-notes))]
     " major"]
    [:div {:class ["alternate-key"]}
     "same as : "
@@ -125,7 +130,7 @@
      (->> rootNote
           (scales/same-key-minor scale)
           (notes/pretty
-           (:steps western-scale)))]
+          western-notes))]
     " minor"]
    ; [:p "name the scale"]
    ; [:p (notes (:steps scale))]
@@ -139,6 +144,7 @@
 
 
 (defn select-string [string replace remove]
+  ^{:key (str (.getTime (js/Date.)) string)}
   [:div {:class ["string"]}
    [:div {:class ["note-select"]}
     ; select the tuning of the string
@@ -185,24 +191,57 @@
    [:button {:on-click #(add)} "+"]])
    ;(map-indexed (fn [idx s] (select-string s (#(onChange idx %))) ss))])
 
+(def banjo-5-string-in-c {:root-note notes/C
+                          :strings [(strings/string 0 notes/D)
+                                    (strings/string 0 notes/C)
+                                    (strings/string 0 notes/G)
+                                    (strings/string 0 notes/C)
+                                    (strings/string 5 notes/G)]})
+(def banjo-5-string-in-g {:root-note notes/G
+                          :strings [(strings/string 0 notes/D)
+                                    (strings/string 0 notes/B)
+                                    (strings/string 0 notes/G)
+                                    (strings/string 0 notes/D)
+                                    (strings/string 5 notes/G)]})
+
+(def default-state (assoc banjo-5-string-in-c :test 1))
+
+(def state (r/atom default-state))
+
+(defn intro [] [:div {:class ["intro"]}
+                [:p "You can try some common configurations like"
+                 [:button {:on-click #(reset! state banjo-5-string-in-c)}
+                  "5 string banjo in C"]
+                 [:button {:on-click #(reset! state banjo-5-string-in-g)}
+                  "5 string banjo in G"]]])
+
 (defn shared-state []
-  (let [root-note (r/atom notes/C)
-        selected-strings (r/atom [(strings/string 0 notes/D)
-                                  (strings/string 0 notes/C)
-                                  (strings/string 0 notes/G)
-                                  (strings/string 0 notes/C)
-                                  (strings/string 5 notes/G)])
-        add-string (fn [] (reset! selected-strings (conj @selected-strings (strings/string 0 notes/C))))
-        remove-string (fn [i] (reset! selected-strings (utils/vec-remove i @selected-strings)))
-        replace-string (fn [i s] (reset! selected-strings (assoc @selected-strings i s)))]
+  (let [
+        ; functions
+        add-string
+        (fn []
+          (swap! state assoc-in [:strings] (conj (:strings @state) (strings/string 0 notes/C))))
+        remove-string
+        (fn [i]
+          (swap! state assoc-in [:strings] (utils/vec-remove i (:strings @state))))
+        replace-string
+        (fn [i s]
+          (swap! state assoc-in [:strings i] s))
+        set-root-note
+        (fn [n]
+          (swap! state assoc-in [:root-note] n))
+        ; root-note (:root-note @state) note - this does not work for some reason, in the same let statement?
+        ]
     (fn []
+      [:div {:class ["app"]}
+       (intro)
       [:div {:class ["main"]}
        [:div {:class ["menu"]}
-        [select-note (fn [n] (reset! root-note n))]
+        [select-note set-root-note]
         [:h3 "Strings: "]
-        [select-strings @selected-strings replace-string remove-string add-string]]
+        [select-strings (:strings @state) replace-string remove-string add-string]]
        [:div {:class ["content"]}
-       [scales @root-note @selected-strings]]])))
+       [scales (:root-note @state) (:strings @state)]]]])))
 
 (defn simple-component []
   [:div
